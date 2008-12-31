@@ -16,26 +16,23 @@ class RBM:
         self.visible_bias = tf.Variable(tf.zeros([self.n_visible]), dtype=tf.float32)
         self.hidden_bias = tf.Variable(tf.zeros([self.n_hidden]), dtype=tf.float32)
 
-        self.visible_recon_p = None
-        self.update_w = None
-        self.update_visible_bias = None
-        self.update_hidden_bias = None
+        self.delta_w = tf.Variable(tf.zeros([self.n_visible, self.n_hidden]), dtype=tf.float32)
+        self.delta_visible_bias = tf.Variable(tf.zeros([self.n_visible]), dtype=tf.float32)
+        self.delta_hidden_bias = tf.Variable(tf.zeros([self.n_hidden]), dtype=tf.float32)
+
+        self.update_weights = None
+        self.update_deltas = None
         self.compute_hidden = None
         self.compute_visible = None
         self.compute_visible_from_hidden = None
 
         self._initialize_vars()
 
-        assert self.visible_recon_p != None
-        assert self.update_w != None
-        assert self.update_visible_bias != None
-        assert self.update_hidden_bias != None
-
+        assert self.update_weights != None
+        assert self.update_deltas != None
         assert self.compute_hidden != None
         assert self.compute_visible != None
         assert self.compute_visible_from_hidden != None
-
-        self.compute_err = tf.reduce_mean(tf.square(self.x - self.visible_recon_p))
 
         init = tf.initialize_all_variables()
         self.sess = tf.Session()
@@ -60,19 +57,7 @@ class RBM:
         return self.sess.run(self.compute_visible, feed_dict={self.x: batch_x})
 
     def partial_fit(self, batch_x):
-        print(1)
-        print(self.delta_w)
-        self.sess.run([self.update_w, self.update_visible_bias, self.update_hidden_bias],
-                      feed_dict={self.x: batch_x,
-                                 self.delta_w_old: self.delta_w_old_store,
-                                 self.delta_visible_bias_old: self.delta_visible_bias_old_store,
-                                 self.delta_hidden_bias_old: self.delta_hidden_bias_old_store})
-        print(2)
-        print(self.delta_w.eval(session=self.sess))
-        self.delta_w_old_store = self.delta_w.eval(session=self.sess)
-        self.delta_visible_bias_old_store = self.delta_visible_bias.eval(session=self.sess)
-        self.delta_hidden_bias_old_store = self.delta_hidden_bias.eval(session=self.sess)
-        print(3)
+        self.sess.run(self.update_weights + self.update_deltas, feed_dict={self.x: batch_x})
         return self.sess.run(self.compute_err, feed_dict={self.x: batch_x})
 
     def get_weights(self):
