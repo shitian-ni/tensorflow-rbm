@@ -1,5 +1,5 @@
 import tensorflow as tf
-from utilsnn import xavier_init
+from .util import xavier_init
 
 
 class AutoEncoder(object):
