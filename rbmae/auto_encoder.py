@@ -6,7 +6,7 @@ class AutoEncoder(object):
     def __init__(self, input_size, layer_sizes, layer_names, tied_weights=False, optimizer=tf.train.AdamOptimizer(),
                  transfer_function=tf.nn.sigmoid):
 
-        self.layer_names  = layer_names
+        self.layer_names = layer_names
         self.tied_weights = tied_weights
 
         # Build the encoding layers
@@ -21,17 +21,17 @@ class AutoEncoder(object):
             dim = layer_sizes[i]
             input_dim = int(next_layer_input.get_shape()[1])
 
-            # Initialize W using xavier initialization
-            W = tf.Variable(xavier_init(input_dim, dim, transfer_function), name=layer_names[i][0])
+            # Initialize w using xavier initialization
+            w = tf.Variable(xavier_init(input_dim, dim, transfer_function), name=layer_names[i][0])
 
             # Initialize b to zero
             b = tf.Variable(tf.zeros([dim]), name=layer_names[i][1])
 
-            # We are going to use tied-weights so store the W matrix for later reference.
-            self.encoding_matrices.append(W)
+            # We are going to use tied-weights so store the w matrix for later reference.
+            self.encoding_matrices.append(w)
             self.encoding_biases.append(b)
 
-            output = transfer_function(tf.matmul(next_layer_input, W) + b)
+            output = transfer_function(tf.matmul(next_layer_input, w) + b)
 
             # the input into the next layer is the output of this layer
             next_layer_input = output
@@ -47,17 +47,17 @@ class AutoEncoder(object):
         self.decoding_biases = []
 
         for i, dim in enumerate(layer_sizes[1:] + [int(self.x.get_shape()[1])]):
-            W = None
+            w = None
             # if we are using tied weights, so just lookup the encoding matrix for this step and transpose it
             if tied_weights:
-                W = tf.identity(tf.transpose(self.encoding_matrices[i]))
+                w = tf.identity(tf.transpose(self.encoding_matrices[i]))
             else:
-                W = tf.Variable(xavier_init(self.encoding_matrices[i].get_shape()[1].value,self.encoding_matrices[i].get_shape()[0].value, transfer_function))
+                w = tf.Variable(xavier_init(self.encoding_matrices[i].get_shape()[1].value,self.encoding_matrices[i].get_shape()[0].value, transfer_function))
             b = tf.Variable(tf.zeros([dim]))
-            self.decoding_matrices.append(W)
+            self.decoding_matrices.append(w)
             self.decoding_biases.append(b)
 
-            output = transfer_function(tf.matmul(next_layer_input, W) + b)
+            output = transfer_function(tf.matmul(next_layer_input, w) + b)
             next_layer_input = output
 
         # i need to reverse the encoding matrices back for loading weights
@@ -76,11 +76,11 @@ class AutoEncoder(object):
         self.sess = tf.Session()
         self.sess.run(init)
 
-    def transform(self, X):
-        return self.sess.run(self.encoded_x, {self.x: X})
+    def transform(self, xs):
+        return self.sess.run(self.encoded_x, {self.x: xs})
 
-    def reconstruct(self, X):
-        return self.sess.run(self.reconstructed_x, feed_dict={self.x: X})
+    def reconstruct(self, xs):
+        return self.sess.run(self.reconstructed_x, feed_dict={self.x: xs})
 
     def load_rbm_weights(self, path, layer_names, layer):
         saver = tf.train.Saver({layer_names[0]: self.encoding_matrices[layer]},
@@ -93,7 +93,7 @@ class AutoEncoder(object):
     def print_weights(self):
         print('Matrices')
         for i in range(len(self.encoding_matrices)):
-            print('Matrice',i)
+            print('Matrice', i)
             print(self.encoding_matrices[i].eval(self.sess).shape)
             print(self.encoding_matrices[i].eval(self.sess))
             if not self.tied_weights:
@@ -120,6 +120,6 @@ class AutoEncoder(object):
                 dict_w[self.layer_names[i][1]+'d'] = self.decoding_biases[i]
         return dict_w
 
-    def partial_fit(self, X):
-        cost, opt = self.sess.run((self.cost, self.optimizer), feed_dict={self.x: X})
+    def partial_fit(self, xs):
+        cost, opt = self.sess.run((self.cost, self.optimizer), feed_dict={self.x: xs})
         return cost

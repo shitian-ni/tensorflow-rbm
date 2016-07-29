@@ -14,9 +14,9 @@ class RBM(object):
 
         # placeholders
         self.x = tf.placeholder(tf.float32, [None, self.n_input])
-        self.rbm_w = tf.placeholder(tf.float32,[self.n_input, self.n_hidden])
-        self.rbm_vb = tf.placeholder(tf.float32,[self.n_input])
-        self.rbm_hb = tf.placeholder(tf.float32,[self.n_hidden])
+        self.rbm_w = tf.placeholder(tf.float32, [self.n_input, self.n_hidden])
+        self.rbm_vb = tf.placeholder(tf.float32, [self.n_input])
+        self.rbm_hb = tf.placeholder(tf.float32, [self.n_hidden])
 
         # variables
         # The weights are initialized to small random values chosen from a zero-mean Gaussian with a
@@ -119,16 +119,16 @@ class RBM(object):
     def return_hidden_weight_as_np(self):
         return self.n_w
 
-    def partial_fit(self, batch_x):
+    def partial_fit(self, xs):
         # 1. always use small ?mini-batches? of 10 to 100 cases.
         #    For big data with lot of classes use mini-batches of size about 10.
         self.n_w, self.n_vb, self.n_hb = self.sess.run([self.update_w, self.update_vb, self.update_hb],
-                                                       feed_dict={self.x: batch_x, self.rbm_w: self.o_w,
+                                                       feed_dict={self.x: xs, self.rbm_w: self.o_w,
                                                                   self.rbm_vb: self.o_vb, self.rbm_hb: self.o_hb})
 
         self.o_w = self.n_w
         self.o_vb = self.n_vb
         self.o_hb = self.n_hb
 
-        return self.sess.run(self.err_sum, feed_dict={self.x: batch_x, self.rbm_w: self.n_w, self.rbm_vb: self.n_vb,
+        return self.sess.run(self.err_sum, feed_dict={self.x: xs, self.rbm_w: self.n_w, self.rbm_vb: self.n_vb,
                                                       self.rbm_hb: self.n_hb})
