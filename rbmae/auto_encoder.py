@@ -47,12 +47,12 @@ class AutoEncoder:
         self.decoding_biases = []
 
         for i, dim in enumerate(layer_sizes[1:] + [int(self.x.get_shape()[1])]):
-            w = None
             # if we are using tied weights, so just lookup the encoding matrix for this step and transpose it
             if tied_weights:
                 w = tf.identity(tf.transpose(self.encoding_matrices[i]))
             else:
-                w = tf.Variable(xavier_init(self.encoding_matrices[i].get_shape()[1].value,self.encoding_matrices[i].get_shape()[0].value, transfer_function))
+                w = tf.Variable(xavier_init(self.encoding_matrices[i].get_shape()[1].value,
+                                            self.encoding_matrices[i].get_shape()[0].value, transfer_function))
             b = tf.Variable(tf.zeros([dim]))
             self.decoding_matrices.append(w)
             self.decoding_biases.append(b)
@@ -108,7 +108,7 @@ class AutoEncoder:
     def save_weights(self, path):
         dict_w = self.get_dict_layer_names()
         saver = tf.train.Saver(dict_w)
-        save_path = saver.save(self.sess, path)
+        return saver.save(self.sess, path)
 
     def get_dict_layer_names(self):
         dict_w = {}
