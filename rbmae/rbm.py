@@ -1,16 +1,16 @@
 import tensorflow as tf
 import numpy as np
+from .util import sample_prob
 
 
-class RBM(object):
+class RBM:
     def __init__(self, n_input, n_hidden, layer_names, alpha=1.0, transfer_function=tf.nn.sigmoid):
         self.n_input = n_input
         self.n_hidden = n_hidden
         self.transfer = transfer_function
         self.layer_names = layer_names
 
-        network_weights = self._initialize_weights()
-        self.weights = network_weights
+        self.weights = self._initialize_weights()
 
         # placeholders
         self.x = tf.placeholder(tf.float32, [None, self.n_input])
@@ -37,7 +37,7 @@ class RBM(object):
         # 1. set visible state to training sample(x) and compute hidden state(h0) of data
         #    then we have binary units of hidden state computed. It is very important to make these
         #    hidden states binary, rather than using the probabilities themselves. (see Hinton paper)
-        self.h0 = self.sample_prob(transfer_function(tf.matmul(self.x, self.rbm_w) + self.rbm_hb))
+        self.h0 = sample_prob(transfer_function(tf.matmul(self.x, self.rbm_w) + self.rbm_hb))
         # 2. compute new visible state of reconstruction based on computed hidden state reconstruction.
         #    However, it is common to use the probability, instead of sampling a binary value.
         #    So this can be binary or probability(so i choose to not use sampled probability)
@@ -52,8 +52,8 @@ class RBM(object):
 
         # stochastic steepest ascent because we need to maximalize log likelihood of p(visible)
         # dlog(p)/dlog(w) = (visible * hidden)_data - (visible * hidden)_reconstruction
-        self.update_w = self.rbm_w + alpha * (self.w_positive_grad - self.w_negative_grad) / tf.to_float(
-            tf.shape(self.x)[0])
+        n = tf.to_float(tf.shape(self.x)[0])
+        self.update_w = self.rbm_w + alpha * (self.w_positive_grad - self.w_negative_grad) / n
         self.update_vb = self.rbm_vb + alpha * tf.reduce_mean(self.x - self.v1, 0)
         self.update_hb = self.rbm_hb + alpha * tf.reduce_mean(self.h0 - self.h1, 0)
 
@@ -76,9 +76,6 @@ class RBM(object):
         # is getting worse.
         return self.sess.run(self.err_sum, feed_dict={self.x: batch, self.rbm_w: self.o_w,
                                                       self.rbm_vb: self.o_vb, self.rbm_hb: self.o_hb})
-
-    def sample_prob(self, probs):
-        return tf.nn.relu(tf.sign(probs - tf.random_uniform(tf.shape(probs))))
 
     def _initialize_weights(self):
         # These weights are only for storing and loading model for tensorflow Saver.
@@ -111,7 +108,7 @@ class RBM(object):
         saver = tf.train.Saver({self.layer_names[0]: self.weights['w'],
                                 self.layer_names[1]: self.weights['vb'],
                                 self.layer_names[2]: self.weights['hb']})
-        save_path = saver.save(self.sess, path)
+        return saver.save(self.sess, path)
 
     def return_weights(self):
         return self.weights

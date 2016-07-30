@@ -11,3 +11,7 @@ def xavier_init(fan_in, fan_out, function):
         low = -1 * np.sqrt(6.0 / (fan_in + fan_out))
         high = 1 * np.sqrt(6.0 / (fan_in + fan_out))
         return tf.random_uniform((fan_in, fan_out), minval=low, maxval=high, dtype=tf.float32)
+
+
+def sample_prob(probs):
+    return tf.nn.relu(tf.sign(probs - tf.random_uniform(tf.shape(probs))))

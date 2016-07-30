@@ -2,7 +2,7 @@ import tensorflow as tf
 from .util import xavier_init
 
 
-class AutoEncoder(object):
+class AutoEncoder:
     def __init__(self, input_size, layer_sizes, layer_names, tied_weights=False, optimizer=tf.train.AdamOptimizer(),
                  transfer_function=tf.nn.sigmoid):
 
