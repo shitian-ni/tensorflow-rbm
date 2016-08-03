@@ -2,15 +2,16 @@ import numpy as np
 import tensorflow as tf
 
 
-def xavier_init(fan_in, fan_out, function):
-    if function is tf.nn.sigmoid:
-        low = -4.0 * np.sqrt(6.0 / (fan_in + fan_out))
-        high = 4.0 * np.sqrt(6.0 / (fan_in + fan_out))
-        return tf.random_uniform((fan_in, fan_out), minval=low, maxval=high, dtype=tf.float32)
-    elif function is tf.nn.tanh:
-        low = -1 * np.sqrt(6.0 / (fan_in + fan_out))
-        high = 1 * np.sqrt(6.0 / (fan_in + fan_out))
-        return tf.random_uniform((fan_in, fan_out), minval=low, maxval=high, dtype=tf.float32)
+def tf_xavier_init(fan_in, fan_out, *, const=1.0, dtype=np.float32):
+    low = -const * np.sqrt(6.0 / (fan_in + fan_out))
+    high = const * np.sqrt(6.0 / (fan_in + fan_out))
+    return tf.random_uniform((fan_in, fan_out), minval=low, maxval=high, dtype=dtype)
+
+
+def np_xavier_init(fan_in, fan_out, *, const=1.0, dtype=np.float32):
+    low = -const * np.sqrt(6.0 / (fan_in + fan_out))
+    high = const * np.sqrt(6.0 / (fan_in + fan_out))
+    return np.random.uniform(size=(fan_in, fan_out), low=low, high=high).astype(dtype)
 
 
 def sample_prob(probs):
