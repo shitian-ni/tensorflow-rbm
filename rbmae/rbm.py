@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from .util import np_xavier_init
+from .util import tf_xavier_init
 
 
 class RBM:
@@ -12,9 +12,10 @@ class RBM:
 
         self.x = tf.placeholder(tf.float32, [None, self.n_visible])
         self.hidden_placeholder = tf.placeholder(tf.float32, [None, self.n_hidden])
-        self.w = tf.placeholder(tf.float32, [self.n_visible, self.n_hidden])
-        self.visible_bias = tf.placeholder(tf.float32, [self.n_visible])
-        self.hidden_bias = tf.placeholder(tf.float32, [self.n_hidden])
+
+        self.w = tf.Variable(tf_xavier_init(self.n_visible, self.n_hidden), dtype=tf.float32)
+        self.visible_bias = tf.Variable(tf.zeros([self.n_visible]), dtype=tf.float32)
+        self.hidden_bias = tf.Variable(tf.zeros([self.n_hidden]), dtype=tf.float32)
 
         self.visible_p = None
         self.update_w = None

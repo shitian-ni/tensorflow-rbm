@@ -1,5 +1,5 @@
 import tensorflow as tf
-from .util import xavier_init
+from .util import tf_xavier_init
 
 
 class AutoEncoder:
@@ -22,7 +22,7 @@ class AutoEncoder:
             input_dim = int(next_layer_input.get_shape()[1])
 
             # Initialize w using xavier initialization
-            w = tf.Variable(xavier_init(input_dim, dim, transfer_function), name=layer_names[i][0])
+            w = tf.Variable(tf_xavier_init(input_dim, dim, transfer_function), name=layer_names[i][0])
 
             # Initialize b to zero
             b = tf.Variable(tf.zeros([dim]), name=layer_names[i][1])
@@ -101,7 +101,7 @@ class AutoEncoder:
                 print(self.decoding_matrices[i].eval(self.sess))
 
     def load_weights(self, path):
-        dict_w = self.get_dict_layer_names() 
+        dict_w = self.get_dict_layer_names()
         saver = tf.train.Saver(dict_w)
         saver.restore(self.sess, path)
 
