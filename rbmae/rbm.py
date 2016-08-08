@@ -1,4 +1,5 @@
 import tensorflow as tf
+import numpy as np
 from .util import tf_xavier_init
 
 
@@ -38,11 +39,10 @@ class RBM:
         assert self.compute_visible_from_hidden != None
         
         if err_function == 'cossim':
-            norm = lambda x: tf.sqrt(tf.reduce_sum(tf.square(x), 1))
-            self.compute_err = 1 - tf.reduce_mean(tf.truediv(
-                tf.reduce_sum(tf.mul(self.x, self.compute_visible), 1),
-                tf.mul(norm(self.x), norm(self.compute_visible))
-                ))
+            x1_norm = tf.nn.l2_normalize(self.x, 1)
+            x2_norm = tf.nn.l2_normalize(self.compute_visible, 1)
+            cos_val = tf.reduce_mean(tf.reduce_sum(tf.mul(x1_norm, x2_norm), 1))
+            self.compute_err = tf.acos(cos_val) / tf.constant(np.pi)
         else:
             self.compute_err = tf.reduce_mean(tf.square(self.x - self.compute_visible))
 
