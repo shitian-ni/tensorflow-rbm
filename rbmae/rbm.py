@@ -6,7 +6,7 @@ from .util import tf_xavier_init
 class RBM:
     def __init__(self, n_visible, n_hidden, learning_rate=1.0, momentum=1.0, xavier_const=1.0, err_function='mse'):
         assert 0.0 < momentum < 1.0
-        assert err_function == 'mse' or err_function == 'cossim'
+        assert err_function == 'mse' or err_function == 'cosine'
         
         self.n_visible = n_visible
         self.n_hidden = n_hidden
@@ -38,7 +38,7 @@ class RBM:
         assert self.compute_visible != None
         assert self.compute_visible_from_hidden != None
         
-        if err_function == 'cossim':
+        if err_function == 'cosine':
             x1_norm = tf.nn.l2_normalize(self.x, 1)
             x2_norm = tf.nn.l2_normalize(self.compute_visible, 1)
             cos_val = tf.reduce_mean(tf.reduce_sum(tf.mul(x1_norm, x2_norm), 1))
