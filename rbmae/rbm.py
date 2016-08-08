@@ -3,7 +3,10 @@ from .util import tf_xavier_init
 
 
 class RBM:
-    def __init__(self, n_visible, n_hidden, learning_rate=1.0, momentum=1.0, xavier_const=1.0):
+    def __init__(self, n_visible, n_hidden, learning_rate=1.0, momentum=1.0, xavier_const=1.0, err_function='mse'):
+        assert 0.0 < momentum < 1.0
+        assert err_function == 'mse' or err_function == 'cossim'
+        
         self.n_visible = n_visible
         self.n_hidden = n_hidden
         self.learning_rate = learning_rate
@@ -33,6 +36,15 @@ class RBM:
         assert self.compute_hidden != None
         assert self.compute_visible != None
         assert self.compute_visible_from_hidden != None
+        
+        if err_function == 'cossim':
+            norm = lambda x: tf.sqrt(tf.reduce_sum(tf.square(x), 1))
+            self.compute_err = 1 - tf.reduce_mean(tf.truediv(
+                tf.reduce_sum(tf.mul(self.x, self.compute_visible), 1),
+                tf.mul(norm(self.x), norm(self.compute_visible))
+                ))
+        else:
+            self.compute_err = tf.reduce_mean(tf.square(self.x - self.compute_visible))
 
         init = tf.initialize_all_variables()
         self.sess = tf.Session()
@@ -41,10 +53,10 @@ class RBM:
     def _initialize_vars(self):
         pass
 
-    def compute_err(self, batch_x):
+    def get_err(self, batch_x):
         return self.sess.run(self.compute_err, feed_dict={self.x: batch_x})
 
-    def compute_free_energy(self):
+    def get_free_energy(self):
         pass
 
     def transform(self, batch_x):
@@ -58,7 +70,6 @@ class RBM:
 
     def partial_fit(self, batch_x):
         self.sess.run(self.update_weights + self.update_deltas, feed_dict={self.x: batch_x})
-        return self.sess.run(self.compute_err, feed_dict={self.x: batch_x})
 
     def get_weights(self):
         return self.w.eval(session=self.sess), \

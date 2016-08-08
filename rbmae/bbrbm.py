@@ -15,7 +15,7 @@ class BBRBM(RBM):
         positive_grad = tf.matmul(tf.transpose(self.x), hidden_p)
         negative_grad = tf.matmul(tf.transpose(visible_recon_p), hidden_recon_p)
 
-        f = lambda x_old, x_new: self.momentum * x_old + self.learning_rate * x_new * (1 - self.momentum)
+        f = lambda x_old, x_new: self.momentum * x_old + self.learning_rate * x_new * (1 - self.momentum) / tf.to_float(tf.shape(x_new)[0])
 
         delta_w_new = f(self.delta_w, positive_grad - negative_grad)
         delta_visible_bias_new = f(self.delta_visible_bias, tf.reduce_mean(self.x - visible_recon_p, 0))
@@ -35,5 +35,3 @@ class BBRBM(RBM):
         self.compute_hidden = tf.nn.sigmoid(tf.matmul(self.x, self.w) + self.hidden_bias)
         self.compute_visible = tf.nn.sigmoid(tf.matmul(self.compute_hidden, tf.transpose(self.w)) + self.visible_bias)
         self.compute_visible_from_hidden = tf.matmul(self.y, tf.transpose(self.w)) + self.visible_bias
-
-        self.compute_err = tf.reduce_mean(tf.square(self.x - visible_recon_p))
