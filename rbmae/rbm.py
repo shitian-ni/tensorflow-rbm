@@ -5,7 +5,7 @@ from .util import tf_xavier_init
 
 class RBM:
     def __init__(self, n_visible, n_hidden, learning_rate=1.0, momentum=1.0, xavier_const=1.0, err_function='mse'):
-        assert 0.0 < momentum < 1.0
+        assert 0.0 <= momentum <= 1.0
         assert err_function == 'mse' or err_function == 'cosine'
         
         self.n_visible = n_visible
@@ -72,9 +72,9 @@ class RBM:
         self.sess.run(self.update_weights + self.update_deltas, feed_dict={self.x: batch_x})
 
     def get_weights(self):
-        return self.w.eval(session=self.sess), \
-               self.visible_bias.eval(session=self.sess),\
-               self.hidden_bias.eval(session=self.sess)
+        return self.sess.run(self.w), \
+               self.sess.run(self.visible_bias),\
+               self.sess.run(self.hidden_bias)
 
     def save_weights(self, path, weights_names):
         saver = tf.train.Saver({weights_names[0]: self.w,

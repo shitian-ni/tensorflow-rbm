@@ -3,7 +3,8 @@ import numpy as np
 
 class Batcher:
     def __init__(self, data, labels=None, *, batch_size=100):
-        assert 0 < len(data.shape) < 3 and 0 < len(labels.shape) < 3
+        assert 0 < len(data.shape) < 3
+        assert 0 < len(labels.shape) < 3
         assert data.shape[0] == labels.shape[0]
 
         self.batch_size = batch_size

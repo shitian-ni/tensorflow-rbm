@@ -1,6 +1,6 @@
 import tensorflow as tf
 from .rbm import RBM
-from .util import sample_prob
+from .util import sample_bernoulli
 
 
 class BBRBM(RBM):
@@ -9,7 +9,7 @@ class BBRBM(RBM):
 
     def _initialize_vars(self):
         hidden_p = tf.nn.sigmoid(tf.matmul(self.x, self.w) + self.hidden_bias)
-        visible_recon_p = tf.nn.sigmoid(tf.matmul(sample_prob(hidden_p), tf.transpose(self.w)) + self.visible_bias)
+        visible_recon_p = tf.nn.sigmoid(tf.matmul(sample_bernoulli(hidden_p), tf.transpose(self.w)) + self.visible_bias)
         hidden_recon_p = tf.nn.sigmoid(tf.matmul(visible_recon_p, self.w) + self.hidden_bias)
 
         positive_grad = tf.matmul(tf.transpose(self.x), hidden_p)

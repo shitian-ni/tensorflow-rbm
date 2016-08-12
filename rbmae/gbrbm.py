@@ -1,15 +1,23 @@
 import tensorflow as tf
+import numpy as np
 from .rbm import RBM
-from .util import sample_prob
+from .util import sample_bernoulli, sample_gaussian
 
 
 class GBRBM(RBM):
-    def __init__(self, *args, **kwargs):
-        RBM.__init__(self, *args, **kwargs)
+    def __init__(self, n_visible, n_hidden, sample_visible=False, sigma=1, **kwargs):
+        self.sample_visible = sample_visible
+        self.sigma = sigma
+
+        RBM.__init__(self, n_visible, n_hidden, **kwargs)
 
     def _initialize_vars(self):
         hidden_p = tf.nn.sigmoid(tf.matmul(self.x, self.w) + self.hidden_bias)
-        visible_recon_p = tf.matmul(sample_prob(hidden_p), tf.transpose(self.w)) + self.visible_bias
+        visible_recon_p = tf.matmul(sample_bernoulli(hidden_p), tf.transpose(self.w)) + self.visible_bias
+
+        if self.sample_visible:
+            visible_recon_p = sample_gaussian(visible_recon_p, self.sigma)
+
         hidden_recon_p = tf.nn.sigmoid(tf.matmul(visible_recon_p, self.w) + self.hidden_bias)
 
         positive_grad = tf.matmul(tf.transpose(self.x), hidden_p)
