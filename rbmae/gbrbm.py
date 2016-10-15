@@ -1,5 +1,4 @@
 import tensorflow as tf
-import numpy as np
 from .rbm import RBM
 from .util import sample_bernoulli, sample_gaussian
 
@@ -23,7 +22,9 @@ class GBRBM(RBM):
         positive_grad = tf.matmul(tf.transpose(self.x), hidden_p)
         negative_grad = tf.matmul(tf.transpose(visible_recon_p), hidden_recon_p)
 
-        f = lambda x_old, x_new: self.momentum * x_old + self.learning_rate * x_new * (1 - self.momentum) / tf.to_float(tf.shape(x_new)[0])
+        def f(x_old, x_new):
+            return self.momentum * x_old +\
+                   self.learning_rate * x_new * (1 - self.momentum) / tf.to_float(tf.shape(x_new)[0])
 
         delta_w_new = f(self.delta_w, positive_grad - negative_grad)
         delta_visible_bias_new = f(self.delta_visible_bias, tf.reduce_mean(self.x - visible_recon_p, 0))

@@ -32,11 +32,11 @@ class RBM:
 
         self._initialize_vars()
 
-        assert self.update_weights != None
-        assert self.update_deltas != None
-        assert self.compute_hidden != None
-        assert self.compute_visible != None
-        assert self.compute_visible_from_hidden != None
+        assert self.update_weights is not None
+        assert self.update_deltas is not None
+        assert self.compute_hidden is not None
+        assert self.compute_visible is not None
+        assert self.compute_visible_from_hidden is not None
         
         if err_function == 'cosine':
             x1_norm = tf.nn.l2_normalize(self.x, 1)
@@ -92,4 +92,3 @@ class RBM:
                                 weights_names[1]: self.visible_bias,
                                 weights_names[2]: self.hidden_bias})
         saver.restore(self.sess, path)
-
