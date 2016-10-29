@@ -91,7 +91,7 @@ Initialization.
 
 Only for `GBRBM`:
 
-* `sample_visible` — sample input data with Gaussian distribution or not, usually you don't want this
+* `sample_visible` — sample reconstructed data with Gaussian distribution (reconstructed data as mean and `sigma` parameter as deviation) or not (if not, every gaussoid will be projected into one point)
 * `sigma` — standard deviation of the input data
 
 Advices:
