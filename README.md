@@ -75,7 +75,22 @@ Examples:
 ### API
 
 ```python
-fit(data_x, n_epoches=10, batch_size=10, shuffle=True, verbose=True, tqdm=None)
+rbm = BBRBM(n_visible, n_hidden, learning_rate=1.0, momentum=1.0, xavier_const=1.0, err_function='mse')
+```
+or
+```python
+rbm = GBRBM(n_visible, n_hidden, learning_rate=1.0, momentum=1.0, xavier_const=1.0, err_function='mse')
+```
+
+Initialization.
+
+* `n_visible` — number of neurons on visible layer
+* `n_hidden` — number of neurons on hidden layer
+* `xavier_const` — constant, used in weights initialization, 1.0 is good
+* `err_function` — error function, it's NOT USED in train process, just in `get_err` function, should be `mse` or `cosine`
+
+```python
+rbm.fit(data_x, n_epoches=10, batch_size=10, shuffle=True, verbose=True, tqdm=None)
 ```
 
 Fit the model.
@@ -90,62 +105,55 @@ Fit the model.
 Returns errors vector.
 
 ```python
-BBRBM(self, n_visible, n_hidden, learning_rate=1.0, momentum=1.0, xavier_const=1.0, err_function='mse')
-GBRBM(self, n_visible, n_hidden, learning_rate=1.0, momentum=1.0, xavier_const=1.0, err_function='mse')
-```
-
-Initialization.
-
-```python
-partial_fit(batch_x)
+rbm.partial_fit(batch_x)
 ```
 
 Fit the model on one batch.
 
 ```python
-reconstruct(batch_x)
+rbm.reconstruct(batch_x)
 ```
 
 Reconstruct data. Input and output shapes are `(n_data, n_visible)`.
 
 ```python
-transform(batch_x)
+rbm.transform(batch_x)
 ```
 
 Transform data. Input shape is `(n_data, n_visible)`, output shape is `(n_data, n_hidden)`.
 
 ```python
-transform_inv(batch_y)
+rbm.transform_inv(batch_y)
 ```
 
 Inverse transform data. Input shape is `(n_data, n_hidden)`, output shape is `(n_data, n_visible)`.
 
 ```python
-get_err(batch_x)
+rbm.get_err(batch_x)
 ```
 
 Returns error on batch.
 
 ```python
-get_weights()
+rbm.get_weights()
 ```
 
 Get RBM's weights as a numpy arrays. Returns `(W, Bv, Bh)` where `W` is weights matrix of shape `(n_visible, n_hidden)`, `Bv` is visible layer bias of shape `(n_visible,)` and `Bh` is hidden layer bias of shape `(n_hidden,)`.
 
 ```python
-set_weights(w, visible_bias, hidden_bias)
+rbm.set_weights(w, visible_bias, hidden_bias)
 ```
 
 Set RBM's weights as numpy arrays.
 
 ```python
-save_weights(path, name)
+rbm.save_weights(path, name)
 ```
 
 Save RBM's weights to `filename` file with unique `name` prefix.
 
 ```python
-load_weights(path, name)
+rbm.load_weights(path, name)
 ```
 
 Loads RBM's weights from `filename` file with unique `name` prefix.
