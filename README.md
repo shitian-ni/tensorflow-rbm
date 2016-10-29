@@ -7,7 +7,6 @@ Tensorflow implementation of Restricted Boltzman Machine for layerwise pretraini
 This is a fork of https://github.com/Cospel/rbm-ae-tf with some corrections and improvements:
 
 - scripts are in the package now
-- tests added
 - implemented momentum for RBM
 - using probabilities instead of samples for training
 - implemented both Bernoulli-Bernoulli RBM and Gaussian-Bernoulli RBM
