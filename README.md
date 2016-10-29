@@ -87,11 +87,11 @@ Initialization.
 * `n_visible` — number of neurons on visible layer
 * `n_hidden` — number of neurons on hidden layer
 * `xavier_const` — constant, used in weights initialization, 1.0 is good
-* `err_function` — error function, it's NOT USED in train process, just in `get_err` function, should be `mse` or `cosine`
+* `err_function` — error function (it's NOT USED in training process, just in `get_err` function), should be `mse` or `cosine`
 
 Only for `GBRBM`:
 
-* `sample_visible` — sample reconstructed data with Gaussian distribution (reconstructed data as mean and `sigma` parameter as deviation) or not (if not, every gaussoid will be projected into one point)
+* `sample_visible` — sample reconstructed data with Gaussian distribution (with reconstructed value as a mean and a `sigma` parameter as deviation) or not (if not, every gaussoid will be projected into one point)
 * `sigma` — standard deviation of the input data
 
 Advices:
