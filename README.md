@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 from tfrbm import BBRBM, GBRBM
 from tensorflow.examples.tutorials.mnist import input_data
 
-mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
+mnist = input_data.read_data_sets('MNIST_data/', one_hot=True)
 mnist_images = mnist.train.images
 
 bbrbm = BBRBM(n_visible=784, n_hidden=64, learning_rate=0.1, momentum=0.95)
@@ -57,8 +57,9 @@ def show_digit(x):
     plt.show()
 
 image = mnist_images[IMAGE]
-show_digit(image)
 image_rec = bbrbm.reconstruct(image.reshape(1,-1))
+
+show_digit(image)
 show_digit(image_rec)
 ```
 
@@ -87,16 +88,17 @@ Initialization.
 * `n_visible` — number of neurons on visible layer
 * `n_hidden` — number of neurons on hidden layer
 * `xavier_const` — constant, used in weights initialization, 1.0 is good
-* `err_function` — error function (it's NOT USED in training process, just in `get_err` function), should be `mse` or `cosine`
+* `err_function` — error function (it's **not used** in training process, just in `get_err` function), should be `mse` or `cosine`
 
 Only for `GBRBM`:
 
 * `sample_visible` — sample reconstructed data with Gaussian distribution (with reconstructed value as a mean and a `sigma` parameter as deviation) or not (if not, every gaussoid will be projected into one point)
 * `sigma` — standard deviation of the input data
 
-Advices:
+*Advices*:
 
-* Use BBRBM for Bernoulli distributed data. Input values in this case shoud be in the interval from `0` to `1`.
+* Use BBRBM for Bernoulli distributed data. Input values in this case **must** be in the interval from `0` to `1`.
+* Use GBRBM for normal distributed data with `0` mean and `sigma` standard deviation. If it's not, just normalize it.
 
 ```python
 rbm.fit(data_x, n_epoches=10, batch_size=10, shuffle=True, verbose=True, tqdm=None)
