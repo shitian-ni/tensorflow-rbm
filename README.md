@@ -1,4 +1,6 @@
-# RBMAE
+# tensorflow-rbm
+
+Tensorflow implementation of Restricted Boltzman Machine for layerwise pretraining of deep autoencoders.
 
 ### Overview
 

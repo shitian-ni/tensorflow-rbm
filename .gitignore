@@ -13,7 +13,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-env/
+venv/
 build/
 develop-eggs/
 dist/
@@ -92,4 +92,3 @@ ENV/
 
 # Rope project settings
 .ropeproject
-

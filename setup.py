@@ -1,15 +1,15 @@
 from distutils.core import setup
 
 desc = """\
-RBMAE
+tensorflow-rbm
 ==============
-Tensorflow implementation of Restricted Boltzman Machine and Autoencoder for layerwise pretraining of Deep Autoencoders with RBM.
+Tensorflow implementation of Restricted Boltzman Machine for layerwise pretraining of deep autoencoders
 """
 
-setup(name='rbmae',
-      version='0.0.1',
-      author='Michal Lukac, Egor Malykh',
+setup(name='tfrbm',
+      version='0.0.2',
+      author='Egor Malykh, Michal Lukac',
       author_email='fnk@fea.st',
       long_description=desc,
-      packages=['rbmae'],
-      url='https://github.com/meownoid/rbmae')
+      packages=['tfrbm'],
+      url='https://github.com/meownoid/tensorflow-rbm')
