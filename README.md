@@ -90,6 +90,13 @@ Fit the model.
 Returns errors vector.
 
 ```python
+BBRBM(self, n_visible, n_hidden, learning_rate=1.0, momentum=1.0, xavier_const=1.0, err_function='mse')
+GBRBM(self, n_visible, n_hidden, learning_rate=1.0, momentum=1.0, xavier_const=1.0, err_function='mse')
+```
+
+Initialization.
+
+```python
 partial_fit(batch_x)
 ```
 
@@ -108,10 +115,40 @@ transform(batch_x)
 Transform data. Input shape is `(n_data, n_visible)`, output shape is `(n_data, n_hidden)`.
 
 ```python
+transform_inv(batch_y)
+```
+
+Inverse transform data. Input shape is `(n_data, n_hidden)`, output shape is `(n_data, n_visible)`.
+
+```python
 get_err(batch_x)
 ```
 
 Returns error on batch.
+
+```python
+get_weights()
+```
+
+Get RBM's weights as a numpy arrays. Returns `(W, Bv, Bh)` where `W` is weights matrix of shape `(n_visible, n_hidden)`, `Bv` is visible layer bias of shape `(n_visible,)` and `Bh` is hidden layer bias of shape `(n_hidden,)`.
+
+```python
+set_weights(w, visible_bias, hidden_bias)
+```
+
+Set RBM's weights as numpy arrays.
+
+```python
+save_weights(path, name)
+```
+
+Save RBM's weights to `filename` file with unique `name` prefix.
+
+```python
+load_weights(path, name)
+```
+
+Loads RBM's weights from `filename` file with unique `name` prefix.
 
 ### Original README
 

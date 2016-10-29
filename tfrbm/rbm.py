@@ -131,19 +131,19 @@ class RBM:
             self.sess.run(self.visible_bias),\
             self.sess.run(self.hidden_bias)
 
-    def save_weights(self, path, weights_names):
-        saver = tf.train.Saver({weights_names[0]: self.w,
-                                weights_names[1]: self.visible_bias,
-                                weights_names[2]: self.hidden_bias})
-        return saver.save(self.sess, path)
+    def save_weights(self, filename, name):
+        saver = tf.train.Saver({name + '_w': self.w,
+                                name + '_v': self.visible_bias,
+                                name + '_h': self.hidden_bias})
+        return saver.save(self.sess, filename)
 
     def set_weights(self, w, visible_bias, hidden_bias):
         self.sess.run(self.w.assign(w))
         self.sess.run(self.visible_bias.assign(visible_bias))
         self.sess.run(self.hidden_bias.assign(hidden_bias))
 
-    def load_weights(self, path, weights_names):
-        saver = tf.train.Saver({weights_names[0]: self.w,
-                                weights_names[1]: self.visible_bias,
-                                weights_names[2]: self.hidden_bias})
-        saver.restore(self.sess, path)
+    def load_weights(self, filename, name):
+        saver = tf.train.Saver({name + '_w': self.w,
+                                name + '_v': self.visible_bias,
+                                name + '_h': self.hidden_bias})
+        saver.restore(self.sess, filename)
