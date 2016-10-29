@@ -79,7 +79,7 @@ rbm = BBRBM(n_visible, n_hidden, learning_rate=1.0, momentum=1.0, xavier_const=1
 ```
 or
 ```python
-rbm = GBRBM(n_visible, n_hidden, learning_rate=1.0, momentum=1.0, xavier_const=1.0, err_function='mse')
+rbm = GBRBM(n_visible, n_hidden, learning_rate=1.0, momentum=1.0, xavier_const=1.0, err_function='mse', sample_visible=False, sigma=1)
 ```
 
 Initialization.
@@ -88,6 +88,15 @@ Initialization.
 * `n_hidden` — number of neurons on hidden layer
 * `xavier_const` — constant, used in weights initialization, 1.0 is good
 * `err_function` — error function, it's NOT USED in train process, just in `get_err` function, should be `mse` or `cosine`
+
+Only for `GBRBM`:
+
+* `sample_visible` — sample input data with Gaussian distribution or not, usually you don't want this
+* `sigma` — standard deviation of the input data
+
+Advices:
+
+* Use BBRBM for Bernoulli distributed data. Input values in this case shoud be in the interval from `0` to `1`.
 
 ```python
 rbm.fit(data_x, n_epoches=10, batch_size=10, shuffle=True, verbose=True, tqdm=None)
