@@ -80,12 +80,12 @@ fit(data_x, n_epoches=10, batch_size=10, shuffle=True, verbose=True, tqdm=None)
 
 Fit the model.
 
-* `data_x` --- data of shape `(n_data, data_dim)`
-* `n_epoches` --- number of epoches
-* `batch_size` --- batch size, should be as small as possible
-* `shuffle` --- shuffle data or not
-* `verbose` --- output to stdout
-* `tqdm` --- use tqdm package or not, should be None, True or 'notebook'
+* `data_x` — data of shape `(n_data, data_dim)`
+* `n_epoches` — number of epoches
+* `batch_size` — batch size, should be as small as possible
+* `shuffle` — shuffle data or not
+* `verbose` — output to stdout
+* `tqdm` — use tqdm package or not, should be None, True or 'notebook'
 
 Returns errors vector.
 
