@@ -71,7 +71,7 @@ class RBM:
     def partial_fit(self, batch_x):
         self.sess.run(self.update_weights + self.update_deltas, feed_dict={self.x: batch_x})
 
-    def fit(self, data_x, n_epoches=10, batch_size=128, shuffle=True, verbose=True, tqdm=None):
+    def fit(self, data_x, n_epoches=10, batch_size=10, shuffle=True, verbose=True, tqdm=None):
         n_data = data_x.shape[0]
         n_batches = n_data // batch_size + (0 if n_data % batch_size == 0 else 1)
 

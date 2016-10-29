@@ -25,26 +25,28 @@ mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 mnist_images = mnist.train.images
 
 bbrbm = BBRBM(n_visible=784, n_hidden=64, learning_rate=0.1, momentum=0.95)
-errs = bbrbm.fit(mnist_images, n_epoches=20, batch_size=128, tqdm='notebook')
+errs = bbrbm.fit(mnist_images, n_epoches=20, batch_size=10, tqdm='notebook')
 plt.plot(errs)
 plt.show()
 ```
 
 Output:
 ```
-Epoch: 0, error: 0.079566
-Epoch: 1, error: 0.047970
-Epoch: 2, error: 0.040229
-Epoch: 3, error: 0.036163
-Epoch: 4, error: 0.033523
-Epoch: 5, error: 0.031571
-Epoch: 6, error: 0.030071
-Epoch: 7, error: 0.028901
-Epoch: 8, error: 0.027961
-Epoch: 9, error: 0.027207
+Epoch: 0, error: 0.069226
+Epoch: 1, error: 0.042563
+Epoch: 2, error: 0.036503
+Epoch: 3, error: 0.033372
+Epoch: 4, error: 0.031310
+Epoch: 5, error: 0.029698
+...
+Epoch: 17, error: 0.022318
+Epoch: 18, error: 0.022065
+Epoch: 19, error: 0.021828
+
+
 ```
 
-![Error plot](https://habrastorage.org/files/861/c6d/f0d/861c6df0d1604e49b4a710d7f0828cbf.png)
+![Error plot](https://habrastorage.org/files/804/985/f56/804985f56399412b8fab7cae1439cfda.png)
 
 Examine some reconstructed data:
 ```python
@@ -64,11 +66,52 @@ Examples:
 
 ![3 original](https://habrastorage.org/files/fa2/a3e/35b/fa2a3e35b2cd417fa70de3e6aa146464.png)
 
-![3 reconstructed](https://habrastorage.org/files/eb3/d8b/8c8/eb3d8b8c8ddb48a384f4ddd43a5ef155.png)
+![3 reconstructed](https://habrastorage.org/files/45b/00b/b89/45b00bb891c04582adef436af7501ffc.png)
 
 ![4 original](https://habrastorage.org/files/1c8/2ba/0e9/1c82ba0e906f4cb49ec6fa0e2e5bfafe.png)
 
-![4 reconstructed](https://habrastorage.org/files/cbb/e65/5ff/cbbe655ff66049348418991b8084088a.png)
+![4 reconstructed](https://habrastorage.org/files/0c0/c17/4c6/0c0c174c638847d397067a9dc504902b.png)
+
+### API
+
+```python
+fit(data_x, n_epoches=10, batch_size=10, shuffle=True, verbose=True, tqdm=None)
+```
+
+Fit the model.
+
+* `data_x` --- data of shape `(n_data, data_dim)`
+* `n_epoches` --- number of epoches
+* `batch_size` --- batch size, should be as small as possible
+* `shuffle` --- shuffle data or not
+* `verbose` --- output to stdout
+* `tqdm` --- use tqdm package or not, should be None, True or 'notebook'
+
+Returns errors vector.
+
+```python
+partial_fit(batch_x)
+```
+
+Fit the model on one batch.
+
+```python
+reconstruct(batch_x)
+```
+
+Reconstruct data. Input and output shapes are `(n_data, n_visible)`.
+
+```python
+transform(batch_x)
+```
+
+Transform data. Input shape is `(n_data, n_visible)`, output shape is `(n_data, n_hidden)`.
+
+```python
+get_err(batch_x)
+```
+
+Returns error on batch.
 
 ### Original README
 
