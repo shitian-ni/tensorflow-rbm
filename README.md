@@ -24,7 +24,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets('MNIST_data/', one_hot=True)
 mnist_images = mnist.train.images
 
-bbrbm = BBRBM(n_visible=784, n_hidden=64, learning_rate=0.1, momentum=0.95)
+bbrbm = BBRBM(n_visible=784, n_hidden=64, learning_rate=0.01, momentum=0.95)
 errs = bbrbm.fit(mnist_images, n_epoches=20, batch_size=10, tqdm='notebook')
 plt.plot(errs)
 plt.show()
