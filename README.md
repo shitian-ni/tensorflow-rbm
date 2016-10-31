@@ -75,6 +75,8 @@ Examples:
 
 ### API
 
+![API Diagram](https://habrastorage.org/files/5d6/4c6/db0/5d64c6db016b48a7859972cbe534dfdb.png)
+
 ```python
 rbm = BBRBM(n_visible, n_hidden, learning_rate=1.0, momentum=1.0, xavier_const=1.0, err_function='mse')
 ```
@@ -150,6 +152,8 @@ rbm.get_weights()
 ```
 
 Get RBM's weights as a numpy arrays. Returns `(W, Bv, Bh)` where `W` is weights matrix of shape `(n_visible, n_hidden)`, `Bv` is visible layer bias of shape `(n_visible,)` and `Bh` is hidden layer bias of shape `(n_hidden,)`.
+
+**Note**: when initializing deep network layer with this weights, use `W` as weights, `Bh` as bias and just ignore the `Bv`.
 
 ```python
 rbm.set_weights(w, visible_bias, hidden_bias)
