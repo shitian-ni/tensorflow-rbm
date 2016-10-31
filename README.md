@@ -92,7 +92,7 @@ Initialization.
 
 Only for `GBRBM`:
 
-* `sample_visible` — sample reconstructed data with Gaussian distribution (with reconstructed value as a mean and a `sigma` parameter as deviation) or not (if not, every gaussoid will be projected into one point)
+* `sample_visible` — sample reconstructed data with Gaussian distribution (with reconstructed value as a mean and a `sigma` parameter as deviation) or not (if not, every gaussoid will be projected into a single point)
 * `sigma` — standard deviation of the input data
 
 *Advices*:
@@ -113,7 +113,7 @@ Fit the model.
 * `verbose` — output to stdout
 * `tqdm` — use tqdm package or not, should be None, True or 'notebook'
 
-Returns errors vector.
+Returns errors array.
 
 ```python
 rbm.partial_fit(batch_x)
@@ -158,13 +158,13 @@ rbm.set_weights(w, visible_bias, hidden_bias)
 Set RBM's weights as numpy arrays.
 
 ```python
-rbm.save_weights(path, name)
+rbm.save_weights(filename, name)
 ```
 
 Save RBM's weights to `filename` file with unique `name` prefix.
 
 ```python
-rbm.load_weights(path, name)
+rbm.load_weights(filename, name)
 ```
 
 Loads RBM's weights from `filename` file with unique `name` prefix.
