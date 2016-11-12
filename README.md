@@ -42,8 +42,7 @@ Epoch: 5, error: 0.029698
 Epoch: 17, error: 0.022318
 Epoch: 18, error: 0.022065
 Epoch: 19, error: 0.021828
-
-
+...
 ```
 
 ![Error plot](https://habrastorage.org/files/804/985/f56/804985f56399412b8fab7cae1439cfda.png)
