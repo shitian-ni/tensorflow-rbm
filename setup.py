@@ -3,7 +3,8 @@ from distutils.core import setup
 desc = """\
 tensorflow-rbm
 ==============
-Tensorflow implementation of Restricted Boltzman Machine for layerwise pretraining of deep autoencoders
+Tensorflow implementation of Restricted Boltzman Machine
+for layerwise pretraining of deep autoencoders
 """
 
 setup(name='tfrbm',

@@ -1,12 +1,37 @@
+from __future__ import print_function
+
 import tensorflow as tf
 import numpy as np
 from .util import tf_xavier_init
 
 
 class RBM:
-    def __init__(self, n_visible, n_hidden, learning_rate=1.0, momentum=1.0, xavier_const=1.0, err_function='mse'):
-        assert 0.0 <= momentum <= 1.0
-        assert err_function == 'mse' or err_function == 'cosine'
+    def __init__(self,
+                 n_visible,
+                 n_hidden,
+                 learning_rate=1.0,
+                 momentum=1.0,
+                 xavier_const=1.0,
+                 err_function='mse',
+                 tqdm=None):
+        if not 0.0 <= momentum <= 1.0:
+            raise ValueError('momentum should be in range [0, 1]')
+
+        if err_function not in {'mse', 'cosine'}:
+            raise ValueError('err_function should be either \'mse\' or \'cosine\'')
+
+        if tqdm not in {None, 'simple', 'notebook'}:
+            raise ValueError('tqdm should be None, \'simple\' or \'notebook\'')
+
+        if tqdm == 'simple':
+            from tqdm import tqdm as tq
+        elif tqdm == 'notebook':
+            from tqdm import tqdm_notebook as tq
+        else:
+            def tq(x, *args, **kwargs):
+                return x
+
+        self._tq = tq
 
         self.n_visible = n_visible
         self.n_hidden = n_hidden
@@ -71,34 +96,30 @@ class RBM:
     def partial_fit(self, batch_x):
         self.sess.run(self.update_weights + self.update_deltas, feed_dict={self.x: batch_x})
 
-    def fit(self, data_x, n_epoches=10, batch_size=10, shuffle=True, verbose=True, tqdm=None):
-        n_data = data_x.shape[0]
-        n_batches = n_data // batch_size + (0 if n_data % batch_size == 0 else 1)
+    def fit(self,
+            data_x,
+            n_epoches=10,
+            batch_size=10,
+            shuffle=True,
+            verbose=True):
+        assert n_epoches > 0
 
-        assert n_batches > 0
+        n_data = data_x.shape[0]
+
+        if batch_size > 0:
+            n_batches = n_data // batch_size + (0 if n_data % batch_size == 0 else 1)
+        else:
+            n_batches = 1
 
         if shuffle:
             data_x_cpy = data_x.copy()
+            inds = np.arange(n_data)
         else:
             data_x_cpy = data_x
 
-        if shuffle:
-            inds = np.arange(n_data)
-
-        if tqdm:
-            if tqdm == 'notebook':
-                from tqdm import tqdm_notebook as tq
-            else:
-                from tqdm import tqdm as tq
-
-        epoches_range = range(n_epoches)
-
-        if tqdm:
-            epoches_range = tq(epoches_range, desc='Epoch')
-
         errs = []
 
-        for e in epoches_range:
+        for e in self._tq(range(n_epoches), desc='Epoch'):
             epoch_errs = np.zeros((n_batches,))
             epoch_errs_ptr = 0
 
@@ -106,12 +127,7 @@ class RBM:
                 np.random.shuffle(inds)
                 data_x_cpy = data_x_cpy[inds]
 
-            batches_range = range(n_batches)
-
-            if tqdm:
-                batches_range = tq(batches_range, desc='Batch')
-
-            for b in batches_range:
+            for b in self._tq(range(n_batches), desc='Batch'):
                 batch_x = data_x_cpy[b * batch_size:(b + 1) * batch_size]
                 self.partial_fit(batch_x)
                 batch_err = self.get_err(batch_x)
@@ -120,7 +136,7 @@ class RBM:
 
             if verbose:
                 err_mean = epoch_errs.mean()
-                print('Epoch: {:d}, error: {:4f}'.format(e, err_mean))
+                print('Epoch: {:d}, error: {:.4f}'.format(e, err_mean))
 
             errs = np.hstack([errs, epoch_errs])
 
