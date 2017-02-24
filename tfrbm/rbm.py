@@ -71,7 +71,7 @@ class RBM:
         else:
             self.compute_err = tf.reduce_mean(tf.square(self.x - self.compute_visible))
 
-        init = tf.initialize_all_variables()
+        init = tf.global_variables_initializer()
         self.sess = tf.Session()
         self.sess.run(init)
 
