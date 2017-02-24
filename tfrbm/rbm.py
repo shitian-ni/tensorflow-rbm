@@ -23,14 +23,12 @@ class RBM:
         if err_function not in {'mse', 'cosine'}:
             raise ValueError('err_function should be either \'mse\' or \'cosine\'')
 
-        if use_tqdm or tqdm is not None:
-            from tqdm import tqdm as tq
-        else:
-            def tq(x, *args, **kwargs):
-                return x
-
         self._use_tqdm = use_tqdm
-        self._tq = tq
+        self._tqdm = None
+
+        if use_tqdm or tqdm is not None:
+            from tqdm import tqdm
+            self._tqdm = tqdm
 
         self.n_visible = n_visible
         self.n_hidden = n_hidden
@@ -129,7 +127,12 @@ class RBM:
                 np.random.shuffle(inds)
                 data_x_cpy = data_x_cpy[inds]
 
-            for b in self._tq(range(n_batches), desc='Epoch: {:d}'.format(e)):
+            r_batches = range(n_batches)
+
+            if verbose and self._use_tqdm:
+                r_batches = self._tqdm(r_batches, desc='Epoch: {:d}'.format(e), ascii=True, file=sys.stdout)
+
+            for b in r_batches:
                 batch_x = data_x_cpy[b * batch_size:(b + 1) * batch_size]
                 self.partial_fit(batch_x)
                 batch_err = self.get_err(batch_x)
@@ -138,7 +141,12 @@ class RBM:
 
             if verbose:
                 err_mean = epoch_errs.mean()
-                print('Train error: {:.4f}'.format(err_mean))
+                if self._use_tqdm:
+                    self._tqdm.write('Train error: {:.4f}'.format(err_mean))
+                    self._tqdm.write('')
+                else:
+                    print('Train error: {:.4f}'.format(err_mean))
+                    print('')
                 sys.stdout.flush()
 
             errs = np.hstack([errs, epoch_errs])
