@@ -9,10 +9,12 @@ class RBM:
     def __init__(self,
                  n_visible,
                  n_hidden,
-                 learning_rate=1.0,
-                 momentum=1.0,
+                 learning_rate=0.01,
+                 momentum=0.95,
                  xavier_const=1.0,
                  err_function='mse',
+                 use_tqdm=False,
+                 # DEPRECATED:
                  tqdm=None):
         if not 0.0 <= momentum <= 1.0:
             raise ValueError('momentum should be in range [0, 1]')
@@ -20,13 +22,8 @@ class RBM:
         if err_function not in {'mse', 'cosine'}:
             raise ValueError('err_function should be either \'mse\' or \'cosine\'')
 
-        if tqdm not in {None, 'simple', 'notebook'}:
-            raise ValueError('tqdm should be None, \'simple\' or \'notebook\'')
-
-        if tqdm == 'simple':
+        if use_tqdm or tqdm is not None:
             from tqdm import tqdm as tq
-        elif tqdm == 'notebook':
-            from tqdm import tqdm_notebook as tq
         else:
             def tq(x, *args, **kwargs):
                 return x
@@ -119,7 +116,10 @@ class RBM:
 
         errs = []
 
-        for e in self._tq(range(n_epoches), desc='Epoch'):
+        for e in range(n_epoches):
+            if verbose:
+                print('Epoch: {:d}'.format(e))
+
             epoch_errs = np.zeros((n_batches,))
             epoch_errs_ptr = 0
 
@@ -127,7 +127,7 @@ class RBM:
                 np.random.shuffle(inds)
                 data_x_cpy = data_x_cpy[inds]
 
-            for b in self._tq(range(n_batches), desc='Batch'):
+            for b in self._tq(range(n_batches), desc='Epoch: {:d}'.format(e)):
                 batch_x = data_x_cpy[b * batch_size:(b + 1) * batch_size]
                 self.partial_fit(batch_x)
                 batch_err = self.get_err(batch_x)
@@ -136,7 +136,7 @@ class RBM:
 
             if verbose:
                 err_mean = epoch_errs.mean()
-                print('Epoch: {:d}, error: {:.4f}'.format(e, err_mean))
+                print('Train error: {:.4f}'.format(e, err_mean))
 
             errs = np.hstack([errs, epoch_errs])
 

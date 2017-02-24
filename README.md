@@ -24,7 +24,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets('MNIST_data/', one_hot=True)
 mnist_images = mnist.train.images
 
-bbrbm = BBRBM(n_visible=784, n_hidden=64, learning_rate=0.01, momentum=0.95, tqdm='notebook')
+bbrbm = BBRBM(n_visible=784, n_hidden=64, learning_rate=0.01, momentum=0.95, use_tqdm=True)
 errs = bbrbm.fit(mnist_images, n_epoches=30, batch_size=10)
 plt.plot(errs)
 plt.show()
@@ -77,18 +77,18 @@ Examples:
 ![API Diagram](https://habrastorage.org/files/5d6/4c6/db0/5d64c6db016b48a7859972cbe534dfdb.png)
 
 ```python
-rbm = BBRBM(n_visible, n_hidden, learning_rate=1.0, momentum=1.0, err_function='mse', tqdm=None)
+rbm = BBRBM(n_visible, n_hidden, learning_rate=0.01, momentum=0.95, err_function='mse', use_tqdm=False)
 ```
 or
 ```python
-rbm = GBRBM(n_visible, n_hidden, learning_rate=1.0, momentum=1.0, err_function='mse', tqdm=None, sample_visible=False, sigma=1)
+rbm = GBRBM(n_visible, n_hidden, learning_rate=0.01, momentum=0.95, err_function='mse', use_tqdm=False, sample_visible=False, sigma=1)
 ```
 
 Initialization.
 
 * `n_visible` — number of neurons on visible layer
 * `n_hidden` — number of neurons on hidden layer
-* `tqdm` — use tqdm package for progress indication or not, should be None, 'simple' or 'notebook'
+* `use_tqdm` — use tqdm package for progress indication or not
 * `err_function` — error function (it's **not used** in training process, just in `get_err` function), should be `mse` or `cosine`
 
 Only for `GBRBM`:
