@@ -1,3 +1,7 @@
+# RESEARCH
+research/
+research.ipynb
+
 # IDEA
 .idea/
 *.iws
@@ -13,7 +17,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-research/
 env/
 build/
 develop-eggs/
