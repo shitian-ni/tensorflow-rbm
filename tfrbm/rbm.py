@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import tensorflow as tf
 import numpy as np
+import sys
 from .util import tf_xavier_init
 
 
@@ -28,6 +29,7 @@ class RBM:
             def tq(x, *args, **kwargs):
                 return x
 
+        self._use_tqdm = use_tqdm
         self._tq = tq
 
         self.n_visible = n_visible
@@ -117,7 +119,7 @@ class RBM:
         errs = []
 
         for e in range(n_epoches):
-            if verbose:
+            if verbose and not self._use_tqdm:
                 print('Epoch: {:d}'.format(e))
 
             epoch_errs = np.zeros((n_batches,))
@@ -136,7 +138,8 @@ class RBM:
 
             if verbose:
                 err_mean = epoch_errs.mean()
-                print('Train error: {:.4f}'.format(e, err_mean))
+                print('Train error: {:.4f}'.format(err_mean))
+                sys.stdout.flush()
 
             errs = np.hstack([errs, epoch_errs])
 
