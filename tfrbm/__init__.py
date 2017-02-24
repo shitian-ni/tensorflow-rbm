@@ -1,5 +1,3 @@
-import pkg_resources
-
 from .bbrbm import BBRBM
 from .gbrbm import GBRBM
 
