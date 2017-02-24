@@ -7,11 +7,6 @@ def tf_xavier_init(fan_in, fan_out, *, const=1.0, dtype=np.float32):
     return tf.random_uniform((fan_in, fan_out), minval=-k, maxval=k, dtype=dtype)
 
 
-def np_xavier_init(fan_in, fan_out, *, const=1.0, dtype=np.float32):
-    k = -const * np.sqrt(6.0 / (fan_in + fan_out))
-    return np.random.uniform(size=(fan_in, fan_out), low=-k, high=k).astype(dtype)
-
-
 def sample_bernoulli(probs):
     return tf.nn.relu(tf.sign(probs - tf.random_uniform(tf.shape(probs))))
 
