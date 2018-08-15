@@ -81,29 +81,6 @@ class RBM:
     def get_energy(self, data):
         return self.sess.run(self.compute_energy, feed_dict={self.x: data})
 
-    def predict(self, data, positions_to_predict):
-        data = np.array(data)
-        min_energy = 10000000
-        best_answer = []
-        need_to_predict = len(positions_to_predict)
-        total_possibilities_num = 2**need_to_predict
-
-        data = np.repeat(data,total_possibilities_num,axis=0)
-
-        for possibility_idx, possibles in enumerate(range(total_possibilities_num)):
-            for idx,possible in enumerate(bin(possibles)[2:]):
-                data[possibility_idx, positions_to_predict[idx]]=int(possible)
-        print(data)
-        energy = self.get_energy(data)
-        print("energy:",energy)
-        best_answer_index = np.argmin(energy)
-        print("best_answer_index:",best_answer_index)
-        min_energy = energy[best_answer_index]
-        best_answer = data[best_answer_index]
-       
-        return best_answer
-
-
     def transform(self, batch_x):
         return self.sess.run(self.compute_hidden, feed_dict={self.x: batch_x})
 
@@ -140,8 +117,8 @@ class RBM:
         errs = []
 
         for e in range(n_epoches):
-            if verbose and not self._use_tqdm:
-                print('Epoch: {:d}'.format(e))
+            # if verbose and e % 100 == 0 and not self._use_tqdm:
+            #     print('Epoch: {:d}'.format(e))
 
             epoch_errs = np.zeros((n_batches,))
             epoch_errs_ptr = 0
@@ -162,19 +139,41 @@ class RBM:
                 epoch_errs[epoch_errs_ptr] = batch_err
                 epoch_errs_ptr += 1
 
-            if verbose:
+            if verbose and e % 1000 == 0:
                 err_mean = epoch_errs.mean()
                 if self._use_tqdm:
                     self._tqdm.write('Train error: {:.4f}'.format(err_mean))
                     self._tqdm.write('')
                 else:
-                    print('Train error: {:.4f}'.format(err_mean))
-                    print('')
+                    print('Epoch: {:d}'.format(e),'Train error: {:.4f}'.format(err_mean))
+                    # print('')
                 sys.stdout.flush()
 
             errs = np.hstack([errs, epoch_errs])
 
         return errs
+
+    def predict(self, data, positions_to_predict):
+        data = np.array(data)
+        min_energy = 10000000
+        best_answer = []
+        need_to_predict = len(positions_to_predict)
+        total_possibilities_num = 2**need_to_predict
+
+        data = np.repeat(data,total_possibilities_num,axis=0)
+
+        for possibility_idx, possibles in enumerate(range(total_possibilities_num)):
+            for idx,possible in enumerate(bin(possibles)[2:]):
+                data[possibility_idx, positions_to_predict[idx]]=int(possible)
+        print("All possibilities: ",data)
+        energy = self.get_energy(data)
+        print("energy:",energy)
+        best_answer_index = np.argmin(energy)
+        print("best_answer_index:",best_answer_index)
+        min_energy = energy[best_answer_index]
+        best_answer = data[best_answer_index]
+       
+        return best_answer
 
     def get_weights(self):
         return self.sess.run(self.w),\
