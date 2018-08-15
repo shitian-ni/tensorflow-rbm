@@ -78,8 +78,31 @@ class RBM:
     def get_err(self, batch_x):
         return self.sess.run(self.compute_err, feed_dict={self.x: batch_x})
 
-    def get_free_energy(self):
-        pass
+    def get_energy(self, data):
+        return self.sess.run(self.compute_energy, feed_dict={self.x: data})
+
+    def predict(self, data, positions_to_predict):
+        data = np.array(data)
+        min_energy = 10000000
+        best_answer = []
+        need_to_predict = len(positions_to_predict)
+        total_possibilities_num = 2**need_to_predict
+
+        data = np.repeat(data,total_possibilities_num,axis=0)
+
+        for possibility_idx, possibles in enumerate(range(total_possibilities_num)):
+            for idx,possible in enumerate(bin(possibles)[2:]):
+                data[possibility_idx, positions_to_predict[idx]]=int(possible)
+        print(data)
+        energy = self.get_energy(data)
+        print("energy:",energy)
+        best_answer_index = np.argmin(energy)
+        print("best_answer_index:",best_answer_index)
+        min_energy = energy[best_answer_index]
+        best_answer = data[best_answer_index]
+       
+        return best_answer
+
 
     def transform(self, batch_x):
         return self.sess.run(self.compute_hidden, feed_dict={self.x: batch_x})

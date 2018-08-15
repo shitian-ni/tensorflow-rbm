@@ -37,3 +37,7 @@ class BBRBM(RBM):
         self.compute_hidden = tf.nn.sigmoid(tf.matmul(self.x, self.w) + self.hidden_bias)
         self.compute_visible = tf.nn.sigmoid(tf.matmul(self.compute_hidden, tf.transpose(self.w)) + self.visible_bias)
         self.compute_visible_from_hidden = tf.nn.sigmoid(tf.matmul(self.y, tf.transpose(self.w)) + self.visible_bias)
+
+        # https://www.cs.toronto.edu/~hinton/absps/guideTR.pdf (25)
+        self.input_to_h = tf.matmul(self.x, self.w) + self.hidden_bias # x
+        self.compute_energy = - tf.reduce_sum(tf.multiply(self.x, self.visible_bias),axis=1) - tf.reduce_sum(tf.log(1+tf.exp(self.input_to_h)),axis=1) 
