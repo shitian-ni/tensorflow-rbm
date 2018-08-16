@@ -11,7 +11,7 @@ class RBM:
                  n_visible,
                  n_hidden,
                  learning_rate=0.01,
-                 momentum=0.95,
+                 momentum=0.8,
                  xavier_const=1.0,
                  err_function='mse',
                  use_tqdm=False,
@@ -68,6 +68,8 @@ class RBM:
         else:
             self.compute_err = tf.reduce_mean(tf.square(self.x - self.compute_visible))
 
+            
+
         init = tf.global_variables_initializer()
         self.sess = tf.Session()
         self.sess.run(init)
@@ -75,7 +77,10 @@ class RBM:
     def _initialize_vars(self):
         pass
 
-    def get_err(self, batch_x):
+    def get_err(self, batch_x, verbose = False):
+        if verbose:
+            print("x: ",self.sess.run(self.x, feed_dict={self.x: batch_x}), 
+                "compute_visible: ",self.sess.run(self.compute_visible, feed_dict={self.x: batch_x}))
         return self.sess.run(self.compute_err, feed_dict={self.x: batch_x})
 
     def get_energy(self, data):
@@ -116,6 +121,8 @@ class RBM:
 
         errs = []
 
+        delta_energies = []
+
         for e in range(n_epoches):
             # if verbose and e % 100 == 0 and not self._use_tqdm:
             #     print('Epoch: {:d}'.format(e))
@@ -141,15 +148,27 @@ class RBM:
 
             if verbose and e % 1000 == 0:
                 err_mean = epoch_errs.mean()
-                if self._use_tqdm:
-                    self._tqdm.write('Train error: {:.4f}'.format(err_mean))
-                    self._tqdm.write('')
-                else:
-                    print('Epoch: {:d}'.format(e),'Train error: {:.4f}'.format(err_mean))
-                    # print('')
+                # if self._use_tqdm:
+                #     self._tqdm.write('Train error: {:.4f}'.format(err_mean))
+                #     self._tqdm.write('')
+                # elif e < 5000:
+                #     print('Epoch: {:d}'.format(e),'Train error: {:.4f}'.format(err_mean))
+                    
                 sys.stdout.flush()
 
             errs = np.hstack([errs, epoch_errs])
+
+            if e%100 == 0:
+                self.learning_rate *= 0.95
+
+            if e%20000 == 0:
+                pass
+                # print("------Epoch: {:d}   ------")
+                # prediction, energy = self.predict([[0,0,-1]],[2])
+                # delta_energy = energy[0]-energy[1]
+                # delta_energies.append(delta_energy)
+                # print("Predicting most difficult to train \"0 xor 0 = ".format(e),
+                #     prediction," delta_energy = ",delta_energy,"\n------------")
 
         return errs
 
@@ -165,15 +184,15 @@ class RBM:
         for possibility_idx, possibles in enumerate(range(total_possibilities_num)):
             for idx,possible in enumerate(bin(possibles)[2:]):
                 data[possibility_idx, positions_to_predict[idx]]=int(possible)
-        print("All possibilities: ",data)
+        # print("All possibilities: ",data)
         energy = self.get_energy(data)
-        print("energy:",energy)
+        # print("energy:",energy)
         best_answer_index = np.argmin(energy)
-        print("best_answer_index:",best_answer_index)
+        # print("best_answer_index:",best_answer_index)
         min_energy = energy[best_answer_index]
         best_answer = data[best_answer_index]
        
-        return best_answer
+        return best_answer[positions_to_predict], energy
 
     def get_weights(self):
         return self.sess.run(self.w),\
