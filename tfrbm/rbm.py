@@ -102,9 +102,12 @@ class RBM:
             data_x,
             n_epoches=10,
             batch_size=10,
+            learning_rate=0.01,
             shuffle=True,
             verbose=True):
         assert n_epoches > 0
+
+        self.learning_rate = learning_rate
 
         n_data = data_x.shape[0]
 
