@@ -4,7 +4,7 @@ Tensorflow implementation of Restricted Boltzmann Machine for layerwise pretrain
 
 ## Overview
 
-This is a fork of https://github.com/meownoid/tensorfow-rbm with predict functions
+This is a fork of https://github.com/meownoid/tensorfow-rbm with predict function and show_usage notebook
 
 ### Original README
 
