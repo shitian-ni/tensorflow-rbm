@@ -6,11 +6,6 @@ Tensorflow implementation of Restricted Boltzmann Machine for layerwise pretrain
 
 This is a fork of https://github.com/meownoid/tensorfow-rbm with predict functions
 
-TODO
-
-- need to fix Bug: 0 xor 0 = 1, error = 0 
-- predict multiple data at the same time
-
 ### Original README
 
 ### Overview
