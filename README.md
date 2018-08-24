@@ -1,6 +1,6 @@
 # tensorflow-rbm
 
-Tensorflow implementation of Restricted Boltzmann Machine for layerwise pretraining of deep autoencoders.
+Tensorflow implementation of Restricted Boltzmann Machine.
 
 ## Overview
 
