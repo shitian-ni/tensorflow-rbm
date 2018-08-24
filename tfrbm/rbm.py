@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import tensorflow as tf
 import numpy as np
+import matplotlib.pyplot as plt
 import sys
 from .util import tf_xavier_init
 
@@ -10,8 +11,8 @@ class RBM:
     def __init__(self,
                  n_visible,
                  n_hidden,
-                 learning_rate=0.01,
-                 momentum=0.8,
+                 learning_rate=5,
+                 momentum=0,
                  xavier_const=1.0,
                  err_function='mse',
                  use_tqdm=False,
@@ -102,9 +103,11 @@ class RBM:
             data_x,
             n_epoches=10,
             batch_size=10,
-            learning_rate=0.01,
+            learning_rate=5,
+            decay = 0,
             shuffle=True,
-            verbose=True):
+            verbose=True, 
+            epochs_to_test = 1):
         assert n_epoches > 0
 
         self.learning_rate = learning_rate
@@ -125,6 +128,14 @@ class RBM:
         errs = []
 
         delta_energies = []
+
+        sample = self.reconstruct(np.random.rand(1,self.n_visible))[0]>=0.5
+        plt.figure()
+        plt.axis('off')
+        plt.title("Image reconstructed before training ", y=1.03)
+            
+        plt.imshow(sample.reshape(self.image_height, -1))
+
 
         for e in range(n_epoches):
             # if verbose and e % 100 == 0 and not self._use_tqdm:
@@ -161,8 +172,34 @@ class RBM:
 
             errs = np.hstack([errs, epoch_errs])
 
-            if e%100 == 0:
-                self.learning_rate *= 0.95
+            self.learning_rate *= (1-decay)
+
+            sample = self.reconstruct(np.random.rand(1,self.n_visible))[0]>=0.5
+
+            original = data_x
+
+            original = data_x[0]
+            samples = sample[:self.n_visible]
+            if type(original) != list:
+                original = original.tolist()
+            if type(samples) != list:
+                samples = samples.tolist()
+
+            def show_img(self, e):
+                if hasattr(self, "image_height"):
+                    
+                    plt.figure()
+                    plt.axis('off')
+                    plt.title("Image reconstructed after training "+str(e+1)+" epochs", y=1.03)
+                        
+                    plt.imshow(sample.reshape(self.image_height, -1))
+
+            if original == samples:
+                print ("Stopped training early because the model can reconstruct the inputs")
+                show_img(self, e)
+                break
+            if e % epochs_to_test == 0:
+                show_img(self, e)
 
             if e%20000 == 0:
                 pass
