@@ -107,7 +107,8 @@ class RBM:
             decay = 0,
             shuffle=True,
             verbose=True, 
-            epochs_to_test = 1):
+            epochs_to_test = 1,
+            early_stop = True):
         assert n_epoches > 0
 
         self.learning_rate = learning_rate
@@ -130,11 +131,13 @@ class RBM:
         delta_energies = []
 
         sample = self.reconstruct(np.random.rand(1,self.n_visible))[0]>=0.5
-        plt.figure()
-        plt.axis('off')
-        plt.title("Image reconstructed before training ", y=1.03)
-            
-        plt.imshow(sample.reshape(self.image_height, -1))
+
+        if hasattr(self, 'image_height'):
+            plt.figure()
+            plt.axis('off')
+            plt.title("Image reconstructed before training ", y=1.03)
+                
+            plt.imshow(sample.reshape(self.image_height, -1))
 
 
         for e in range(n_epoches):
@@ -186,20 +189,21 @@ class RBM:
                 samples = samples.tolist()
 
             def show_img(self, e):
-                if hasattr(self, "image_height"):
                     
-                    plt.figure()
-                    plt.axis('off')
-                    plt.title("Image reconstructed after training "+str(e+1)+" epochs", y=1.03)
-                        
-                    plt.imshow(sample.reshape(self.image_height, -1))
+                plt.figure()
+                plt.axis('off')
+                plt.title("Image reconstructed after training "+str(e+1)+" epochs", y=1.03)
+                    
+                plt.imshow(sample.reshape(self.image_height, -1))
 
-            if original == samples:
+            if early_stop and original == samples:
                 print ("Stopped training early because the model can reconstruct the inputs")
-                show_img(self, e)
+                if hasattr(self, 'image_height'):
+                    show_img(self, e)
                 break
             if e % epochs_to_test == 0:
-                show_img(self, e)
+                if hasattr(self, 'image_height'):
+                    show_img(self, e)
 
             if e%20000 == 0:
                 pass

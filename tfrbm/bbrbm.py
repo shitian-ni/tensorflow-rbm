@@ -12,6 +12,10 @@ class BBRBM(RBM):
         visible_recon_p = tf.nn.sigmoid(tf.matmul(sample_bernoulli(hidden_p), tf.transpose(self.w)) + self.visible_bias)
         hidden_recon_p = tf.nn.sigmoid(tf.matmul(visible_recon_p, self.w) + self.hidden_bias)
 
+        self.hidden_p = hidden_p
+        self.visible_recon_p = visible_recon_p
+
+
         positive_grad = tf.matmul(tf.transpose(self.x), hidden_p)
         negative_grad = tf.matmul(tf.transpose(visible_recon_p), hidden_recon_p)
 
