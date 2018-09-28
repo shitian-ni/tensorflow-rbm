@@ -4,7 +4,7 @@ Tensorflow implementation of Restricted Boltzmann Machine.
 
 ## Overview
 
-This is a fork of https://github.com/meownoid/tensorfow-rbm with predict function and show_usage notebook
+This is a fork of https://github.com/meownoid/tensorfow-rbm with predict function and notebooks showing how to calculate xor with RBM, and also how to reconstruct images.
 
 ### Original README
 
