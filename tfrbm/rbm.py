@@ -108,7 +108,7 @@ class RBM:
             shuffle=True,
             verbose=True, 
             epochs_to_test = 1,
-            early_stop = True):
+            early_stop = False):
         assert n_epoches > 0
 
         self.learning_rate = learning_rate
